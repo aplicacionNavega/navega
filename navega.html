@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Geolocalización usando HTTP con recursos HTTPS</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #info {
+      margin: 15px auto;
+      font-size: 1.2rem;
+      background: rgba(0,0,0,0.4);
+      border-radius: 8px;
+      padding: 10px;
+      max-width: 600px;
+    }
+    button {
+      background-color: #4860ee;
+      color: white;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #3550cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Geolocalización usando HTTP con recursos seguros</h1>
+  <div id="info">Haz click en el botón para obtener tu ubicación actual.</div>
+  <button onclick="getLocation()">Obtener mi ubicación</button>
+
+  <script>
+    function getLocation() {
+      const info = document.getElementById('info');
+
+      // Aunque la página esté servida por HTTP, se puede usar la API de geolocalización si el navegador lo permite.
+      if (!navigator.geolocation) {
+        info.textContent = 'Geolocalización no es soportada por tu navegador.';
+        return;
+      }
+
+      info.textContent = 'Obteniendo ubicación...';
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+          info.textContent = `Latitud: ${lat}, Longitud: ${lon}`;
+          // Abrir Google Maps con HTTPS internamente
+          const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
+          window.open(mapsUrl, '_blank');
+        },
+        error => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              info.textContent = 'Permiso denegado para acceder a la ubicación.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              info.textContent = 'Información de ubicación no disponible.';
+              break;
+            case error.TIMEOUT:
+              info.textContent = 'Tiempo agotado para obtener la ubicación.';
+              break;
+            default:
+              info.textContent = 'Error desconocido al obtener la ubicación.';
+              break;
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    }
+  </script>
+</body>
+</html>
