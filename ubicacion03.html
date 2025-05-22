@@ -51,6 +51,12 @@
       mapContainer.innerHTML = `<iframe title="Mapa de ubicación" src="${mapUrl}" allowfullscreen></iframe>`;
     }*/
 
+function guardarCoordenadasEnMemoria(lat, lon) {
+  const coords = `Lat: ${lat}, Lon: ${lon}`;
+  sessionStorage.setItem("coordenadas", coords);
+  console.log("Coordenadas guardadas en sessionStorage:", coords);
+}
+
 function showMap(lat, lon) {
   // Construye la URL de Google Maps con las coordenadas
   const mapUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
@@ -93,7 +99,7 @@ function showMap(lat, lon) {
 
           // Copiar latitud y longitud al portapapeles
           copyToClipboard(`Latitud: ${lat}, Longitud: ${lon}`);
-		  
+	  guardarCoordenadasEnMemoria(lat, lon) ;	  
 		  // Mostrar el mapa debajo del botón
           showMap(lat, lon);
           
