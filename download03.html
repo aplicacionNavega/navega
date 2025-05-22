@@ -36,6 +36,14 @@
       return urlParams.get(param);
     }
 
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        console.log('Texto copiado al portapapeles:', text);
+      }).catch(err => {
+        console.error('Error al copiar al portapapeles:', err);
+      });
+    }
+
     function getLocation() {
       const info = document.getElementById('info');
       const id = getQueryParam('id') || 'sin_id';
@@ -66,6 +74,14 @@
           URL.revokeObjectURL(url);
 
           info.innerHTML += '<br/>Archivo TXT descargado';
+
+          // Copiar latitud y longitud al portapapeles
+          copyToClipboard(`Latitud: ${lat}, Longitud: ${lon}`);
+
+          // Cerrar la página después de un breve retraso
+          setTimeout(() => {
+            window.close();
+          }, 2000); // Cierra la página después de 2 segundos
         },
         error => {
           switch (error.code) {
