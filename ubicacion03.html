@@ -44,12 +44,21 @@
       });
     }
 	
-	function showMap(lat, lon) {
+	/*function showMap(lat, lon) {
       const mapContainer = document.getElementById('map-container');
       // Use Google Maps embed URL with query parameters for location
       const mapUrl = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
       mapContainer.innerHTML = `<iframe title="Mapa de ubicación" src="${mapUrl}" allowfullscreen></iframe>`;
-    }
+    }*/
+
+function showMap(lat, lon) {
+  // Construye la URL de Google Maps con las coordenadas
+  const mapUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
+  
+  // Redirige al usuario a la URL del mapa
+  window.location.href = mapUrl;
+}
+
 	
     function getLocation() {
       const info = document.getElementById('info');
