@@ -29,6 +29,8 @@
   <h1>Geolocalización y Descarga de Archivo</h1>
   <div id="info">Cargando ubicación...</div>
   <div id="map-container" aria-label="Mapa de ubicación"></div>
+  <button onclick="iniciarComunicacion()" style="margin-top:20px;">Enviar coordenadas</button>
+
   <script>
     // Obtener parámetro 'id' de la URL
     function getQueryParam(param) {
@@ -44,18 +46,12 @@
       });
     }
 	
-	/*function showMap(lat, lon) {
+    /*function showMap(lat, lon) {
       const mapContainer = document.getElementById('map-container');
       // Use Google Maps embed URL with query parameters for location
       const mapUrl = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
       mapContainer.innerHTML = `<iframe title="Mapa de ubicación" src="${mapUrl}" allowfullscreen></iframe>`;
     }*/
-
-function guardarCoordenadasEnMemoria(lat, lon) {
-  const coords = `Lat: ${lat}, Lon: ${lon}`;
-  sessionStorage.setItem("coordenadas", coords);
-  console.log("Coordenadas guardadas en sessionStorage:", coords);
-}
 
 function showMap(lat, lon) {
   // Construye la URL de Google Maps con las coordenadas
@@ -127,7 +123,21 @@ function showMap(lat, lon) {
         }
       );
     }
+    
+function iniciarComunicacion() {
+    // Enviar mensaje a la ventana que abrió esta (si existe)
+    window.opener?.postMessage("receptor-listo", "*");
+  }
 
+  // Escuchar respuesta desde la otra ventana
+  window.addEventListener("message", (event) => {
+    if (event.data.lat && event.data.lon) {
+      document.querySelector("sslat").textContent = "Latitud: " + event.data.lat;
+      document.querySelector("sslon").textContent = "Longitud: " + event.data.lon;
+    }
+  });
+
+	  
     // Ejecutar automáticamente al cargar la página
     window.onload = getLocation;
   </script>
