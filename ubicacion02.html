@@ -36,6 +36,14 @@
       return urlParams.get(param);
     }
 
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        console.log('Texto copiado al portapapeles:', text);
+      }).catch(err => {
+        console.error('Error al copiar al portapapeles:', err);
+      });
+    }
+    
     function getLocation() {
       const info = document.getElementById('info');
       const id = getQueryParam('id') || 'sin_id';
@@ -45,6 +53,11 @@
         return;
       }
 
+      function showMap(lat, lon) {
+      const mapUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
+      window.location.href = mapUrl;
+      }
+      
       info.textContent = 'Obteniendo ubicación...';
 
       navigator.geolocation.getCurrentPosition(
@@ -66,6 +79,8 @@
           URL.revokeObjectURL(url);
 
           info.innerHTML += '<br/>Archivo TXT descargado';
+          copyToClipboard(`${lat}, ${lon}`);
+          showMap(lat, lon);
         },
         error => {
           switch (error.code) {
