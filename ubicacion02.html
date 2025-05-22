@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Geolocalización y Descarga de Archivo</title>
+  <div id="map-container" aria-label="Mapa de ubicación"></div>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -53,14 +54,9 @@
         return;
       }
 
-      function showMap1(lat, lon) {
-      const mapUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
-      window.location.href = mapUrl;
-      }
-      
       function showMap(lat, lon) {
         const mapContainer = document.getElementById('map-container');
-        const mapUrl = `https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${lat},${lon}&zoom=15`;
+        const mapUrl = ``https://www.google.com/maps?q=${lat},${lon}&z=15`;
         mapContainer.innerHTML = `<iframe title="Mapa de ubicación" src="${mapUrl}" allowfullscreen></iframe>`;
       }
       
