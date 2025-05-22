@@ -43,7 +43,14 @@
         console.error('Error al copiar al portapapeles:', err);
       });
     }
-
+	
+	function showMap(lat, lon) {
+      const mapContainer = document.getElementById('map-container');
+      // Use Google Maps embed URL with query parameters for location
+      const mapUrl = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
+      mapContainer.innerHTML = `<iframe title="Mapa de ubicación" src="${mapUrl}" allowfullscreen></iframe>`;
+    }
+	
     function getLocation() {
       const info = document.getElementById('info');
       const id = getQueryParam('id') || 'sin_id';
@@ -77,11 +84,10 @@
 
           // Copiar latitud y longitud al portapapeles
           copyToClipboard(`Latitud: ${lat}, Longitud: ${lon}`);
-
-          // Cerrar la página después de un breve retraso
-          setTimeout(() => {
-            window.close();
-          }, 2000); // Cierra la página después de 2 segundos
+		  
+		  // Mostrar el mapa debajo del botón
+          showMap(lat, lon);
+          
         },
         error => {
           switch (error.code) {
