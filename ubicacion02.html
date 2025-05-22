@@ -53,9 +53,15 @@
         return;
       }
 
-      function showMap(lat, lon) {
+      function showMap1(lat, lon) {
       const mapUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
       window.location.href = mapUrl;
+      }
+      
+      function showMap(lat, lon) {
+        const mapContainer = document.getElementById('map-container');
+        const mapUrl = `https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${lat},${lon}&zoom=15`;
+        mapContainer.innerHTML = `<iframe title="Mapa de ubicación" src="${mapUrl}" allowfullscreen></iframe>`;
       }
       
       info.textContent = 'Obteniendo ubicación...';
