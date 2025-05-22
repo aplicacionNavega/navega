@@ -25,121 +25,116 @@
     }
   </style>
 </head>
-<body>
-  <h1>Geolocalización y Descarga de Archivo</h1>
-  <div id="info">Cargando ubicación...</div>
-  <div id="map-container" aria-label="Mapa de ubicación"></div>
-  <button onclick="iniciarComunicacion()" style="margin-top:20px;">Enviar coordenadas</button>
+<script>
+  let latitudCapturada = null;
+  let longitudCapturada = null;
 
-  <script>
-    // Obtener parámetro 'id' de la URL
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
+  function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      console.log('Texto copiado al portapapeles:', text);
+    }).catch(err => {
+      console.error('Error al copiar al portapapeles:', err);
+    });
+  }
+
+  function showMap(lat, lon) {
+    const mapUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
+    window.location.href = mapUrl;
+  }
+
+  function guardarCoordenadasEnMemoria(lat, lon) {
+    latitudCapturada = lat;
+    longitudCapturada = lon;
+  }
+
+  function getLocation() {
+    const info = document.getElementById('info');
+    const id = getQueryParam('id') || 'sin_id';
+
+    if (!navigator.geolocation) {
+      info.textContent = 'Geolocalización no es soportada por tu navegador.';
+      return;
     }
 
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        console.log('Texto copiado al portapapeles:', text);
-      }).catch(err => {
-        console.error('Error al copiar al portapapeles:', err);
-      });
-    }
-	
-    /*function showMap(lat, lon) {
-      const mapContainer = document.getElementById('map-container');
-      // Use Google Maps embed URL with query parameters for location
-      const mapUrl = `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
-      mapContainer.innerHTML = `<iframe title="Mapa de ubicación" src="${mapUrl}" allowfullscreen></iframe>`;
-    }*/
+    info.textContent = 'Obteniendo ubicación...';
 
-function showMap(lat, lon) {
-  // Construye la URL de Google Maps con las coordenadas
-  const mapUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15`;
-  
-  // Redirige al usuario a la URL del mapa
-  window.location.href = mapUrl;
-}
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const lat = position.coords.latitude.toFixed(6);
+        const lon = position.coords.longitude.toFixed(6);
+        info.textContent = `Latitud: ${lat}, Longitud: ${lon}`;
 
-	
-    function getLocation() {
-      const info = document.getElementById('info');
-      const id = getQueryParam('id') || 'sin_id';
+        guardarCoordenadasEnMemoria(lat, lon);
 
-      if (!navigator.geolocation) {
-        info.textContent = 'Geolocalización no es soportada por tu navegador.';
-        return;
-      }
+        const contenido = `Latitud|${lat}|Longitud|${lon}`;
+        const blob = new Blob([contenido], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
 
-      info.textContent = 'Obteniendo ubicación...';
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${id}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const lat = position.coords.latitude.toFixed(6);
-          const lon = position.coords.longitude.toFixed(6);
-          info.textContent = `Latitud: ${lat}, Longitud: ${lon}`;
-        
-          const contenido = `Latitud|${lat}|Longitud|${lon}`;
-          const blob = new Blob([contenido], { type: 'text/plain' });
-          const url = URL.createObjectURL(blob);
-          
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${id}.txt`; // Nombre del archivo usando el id
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-
-          info.innerHTML += '<br/>Archivo TXT descargado';
-
-          // Copiar latitud y longitud al portapapeles
-          copyToClipboard(`Latitud: ${lat}, Longitud: ${lon}`);
-	  guardarCoordenadasEnMemoria(lat, lon) ;	  
-		  // Mostrar el mapa debajo del botón
-          showMap(lat, lon);
-          
-        },
-        error => {
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              info.textContent = 'Permiso denegado para acceder a la ubicación.';
-              break;
-            case error.POSITION_UNAVAILABLE:
-              info.textContent = 'Información de ubicación no disponible.';
-              break;
-            case error.TIMEOUT:
-              info.textContent = 'Tiempo agotado para obtener la ubicación.';
-              break;
-            default:
-              info.textContent = 'Error desconocido al obtener la ubicación.';
-              break;
-          }
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
+        info.innerHTML += '<br/>Archivo TXT descargado';
+        copyToClipboard(`Latitud: ${lat}, Longitud: ${lon}`);
+        showMap(lat, lon);
+      },
+      error => {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            info.textContent = 'Permiso denegado para acceder a la ubicación.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            info.textContent = 'Información de ubicación no disponible.';
+            break;
+          case error.TIMEOUT:
+            info.textContent = 'Tiempo agotado para obtener la ubicación.';
+            break;
+          default:
+            info.textContent = 'Error desconocido al obtener la ubicación.';
+            break;
         }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  }
+
+  function iniciarComunicacion() {
+    if (window.opener && latitudCapturada && longitudCapturada) {
+      window.opener.postMessage(
+        { lat: latitudCapturada, lon: longitudCapturada },
+        "*"
       );
+      console.log("Coordenadas enviadas al receptor.");
+    } else {
+      alert("No se pudo enviar coordenadas. Asegúrate de haber abierto esta página desde otra ventana y que la ubicación esté disponible.");
     }
-    
-function iniciarComunicacion() {
-    // Enviar mensaje a la ventana que abrió esta (si existe)
-    window.opener?.postMessage("receptor-listo", "*");
-  }
+  }
 
-  // Escuchar respuesta desde la otra ventana
-  window.addEventListener("message", (event) => {
-    if (event.data.lat && event.data.lon) {
-      document.querySelector("sslat").textContent = "Latitud: " + event.data.lat;
-      document.querySelector("sslon").textContent = "Longitud: " + event.data.lon;
-    }
-  });
+  // Escuchar si el receptor solicita las coordenadas
+  window.addEventListener("message", (event) => {
+    if (event.data === "receptor-listo" && latitudCapturada && longitudCapturada) {
+      event.source.postMessage(
+        { lat: latitudCapturada, lon: longitudCapturada },
+        event.origin
+      );
+      console.log("Coordenadas enviadas automáticamente al receptor.");
+    }
+  });
 
-	  
-    // Ejecutar automáticamente al cargar la página
-    window.onload = getLocation;
-  </script>
+  window.onload = getLocation;
+</script>
 </body>
 </html>
