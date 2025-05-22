@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Página de Redirección</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+    input {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #ffffff;
+      color: #185a9d;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ir a Geolocalización</h1>
+  <p>Introduce un ID para generar el archivo:</p>
+  <input type="text" id="userId" placeholder="Ej: 2345" />
+  <button onclick="goToGeo()">Ir</button>
+
+  <script>
+    function goToGeo() {
+      const id = document.getElementById('userId').value.trim();
+      if (id) {
+        window.location.href = `ubicacion02.html?id=${encodeURIComponent(id)}`;
+      } else {
+        alert('Por favor, ingresa un ID válido.');
+      }
+    }
+  </script>
+</body>
+</html>

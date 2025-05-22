@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Geolocalización y Descarga de Archivo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #info {
+      margin: 15px auto;
+      font-size: 1.2rem;
+      background: rgba(0,0,0,0.4);
+      border-radius: 8px;
+      padding: 10px;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Geolocalización y Descarga de Archivo</h1>
+  <div id="info">Cargando ubicación...</div>
+
+  <script>
+    // Obtener parámetro 'id' de la URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function getLocation() {
+      const info = document.getElementById('info');
+      const id = getQueryParam('id') || 'sin_id';
+
+      if (!navigator.geolocation) {
+        info.textContent = 'Geolocalización no es soportada por tu navegador.';
+        return;
+      }
+
+      info.textContent = 'Obteniendo ubicación...';
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+          info.textContent = `Latitud: ${lat}, Longitud: ${lon}`;
+        
+          const contenido = `Latitud|${lat}|Longitud|${lon}`;
+          const blob = new Blob([contenido], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${id}.txt`; // Nombre del archivo usando el id
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          info.innerHTML += '<br/>Archivo TXT descargado';
+        },
+        error => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              info.textContent = 'Permiso denegado para acceder a la ubicación.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              info.textContent = 'Información de ubicación no disponible.';
+              break;
+            case error.TIMEOUT:
+              info.textContent = 'Tiempo agotado para obtener la ubicación.';
+              break;
+            default:
+              info.textContent = 'Error desconocido al obtener la ubicación.';
+              break;
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    }
+
+    // Ejecutar automáticamente al cargar la página
+    window.onload = getLocation;
+  </script>
+</body>
+</html>
