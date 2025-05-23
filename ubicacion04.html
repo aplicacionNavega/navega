@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Geolocalización y Copia</title>
   <style>
     body {
@@ -12,37 +13,48 @@
       padding: 20px;
       text-align: center;
     }
+
     h1 {
       margin-bottom: 20px;
+      font-size: 1.5rem;
     }
+
     #info {
       margin: 15px auto;
-      font-size: 1.2rem;
+      font-size: 1rem;
       background: rgba(0,0,0,0.4);
       border-radius: 8px;
       padding: 10px;
-      max-width: 600px;
+      max-width: 100%;
     }
+
     .coord-container {
       margin: 10px auto;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
+      width: 100%;
+      max-width: 400px;
     }
+
     input[type="text"] {
-      padding: 8px;
+      padding: 10px;
       border-radius: 5px;
       border: none;
-      width: 200px;
+      width: 100%;
+      font-size: 1rem;
     }
+
     .tooltip {
       position: relative;
       display: inline-block;
+      width: 100%;
     }
+
     .tooltip .tooltiptext {
       visibility: hidden;
-      width: 160px;
+      width: 90%;
       background-color: #333;
       color: #fff;
       text-align: center;
@@ -50,24 +62,29 @@
       padding: 5px;
       position: absolute;
       z-index: 1;
-      bottom: 125%; /* Posición arriba del botón */
+      bottom: 125%;
       left: 50%;
-      margin-left: -80px;
+      transform: translateX(-50%);
       opacity: 0;
       transition: opacity 0.3s;
     }
+
     .tooltip:hover .tooltiptext {
       visibility: visible;
       opacity: 1;
     }
+
     button {
-      padding: 8px 12px;
+      padding: 10px;
       border: none;
       border-radius: 5px;
       background-color: #4CAF50;
       color: white;
       cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
     }
+
     button:hover {
       background-color: #45a049;
     }
@@ -79,7 +96,7 @@
   <div class="coord-container">
     <input type="text" id="lat" readonly placeholder="Latitud" />
     <div class="tooltip">
-      <button onclick="copyToClipboard('lat')">&nbsp;Latitud&nbsp;&nbsp;&nbsp;</button>
+      <button onclick="copyToClipboard('lat')">Copiar Latitud</button>
       <span class="tooltiptext">Presiona para copiar la latitud</span>
     </div>
   </div>
@@ -87,7 +104,7 @@
   <div class="coord-container">
     <input type="text" id="lon" readonly placeholder="Longitud" />
     <div class="tooltip">
-      <button onclick="copyToClipboard('lon')">&nbsp;Longitud&nbsp;</button>
+      <button onclick="copyToClipboard('lon')">Copiar Longitud</button>
       <span class="tooltiptext">Presiona para copiar la longitud</span>
     </div>
   </div>
