@@ -134,9 +134,9 @@
         position => {
           const lat = position.coords.latitude.toFixed(6);
           const lon = position.coords.longitude.toFixed(6);
-		  const geo = `${lat},${lon}`;
+		  const geo = `${lat},${lon}`; 
           document.getElementById('geo').value = geo;
-          info.textContent = 'Latitud,Longitud obtenida correctamente.';
+          info.textContent = 'Latitud y Longitud obtenida correctamente.';
         },
         error => {
           switch (error.code) {
