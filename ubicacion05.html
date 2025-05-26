@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geolocalización</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      margin: 0;
+      padding: 30px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+
+    #info {
+      margin: 20px auto;
+      font-size: 1.2rem;
+      background: rgba(0,0,0,0.4);
+      border-radius: 10px;
+      margin: 20px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    input[type="text"] {
+      padding: 6px;
+      border-radius: 5px;
+      border: none;
+      width: 80%;
+      max-width: 250px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 90%;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 1rem;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      max-width: 250px;
+      font-size: 1.1rem;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Datos de Geolocalización</h1>
+
+  <div class="coord-container">
+    <input type="text" id="geo" readonly placeholder="Geolocalización" />
+    <div class="tooltip">
+      <button onclick="copyToClipboard('lat')">Copiar Geolocalización</button>
+      <span class="tooltiptext">Presiona para copiar Geolocalización</span>
+    </div>
+  </div>
+
+  <div id="info">Cargando ubicación...</div>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function copyToClipboard(id) {
+      const text = document.getElementById(id).value;
+      navigator.clipboard.writeText(text).then(() => {
+        console.log(`Copiado: ${text}`);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+      });
+    }
+
+    function getLocation() {
+      const info = document.getElementById('info');
+      const id = getQueryParam('id') || 'sin_id';
+
+      if (!navigator.geolocation) {
+        info.textContent = 'Geolocalización no es soportada por tu navegador.';
+        return;
+      }
+
+      info.textContent = 'Obteniendo ubicación...';
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+		  const geo = `Latitud: ${lat}, Longitud: ${lon}`;
+          document.getElementById('geo').value = geo;
+          info.textContent = 'Ubicación obtenida correctamente.';
+        },
+        error => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              info.textContent = 'Permiso denegado para acceder a la ubicación.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              info.textContent = 'Información de ubicación no disponible.';
+              break;
+            case error.TIMEOUT:
+              info.textContent = 'Tiempo agotado para obtener la ubicación.';
+              break;
+            default:
+              info.textContent = 'Error desconocido al obtener la ubicación.';
+              break;
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    }
+
+    window.onload = getLocation;
+  </script>
+</body>
+</html>
